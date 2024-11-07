@@ -1,5 +1,7 @@
+import { neon } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/neon-http";
 import { Hono } from "hono";
-import { Bindings } from "hono/types";
+import { products } from "./db/schema";
 
 export type Env = {
 	DATABASE_URL : string
@@ -8,11 +10,12 @@ export type Env = {
 const app = new Hono<{Bindings : Env}>()
 
 app.get('/', async (c) => {
-	console.log(c.env.DATABASE_URL);
+	const sql = neon(c.env.DATABASE_URL)
+	const db = drizzle(sql)
+
+	const allProducts = await db.select().from(products)
 	
-	const body = await c.req.parseBody()
-	console.log(body);
-	return c.json({msg: "hey There"})
+	return c.json(allProducts)
   })
 
   export default app
