@@ -9,7 +9,7 @@ export type Env = {
 
 const app = new Hono<{Bindings : Env}>()
 
-app.get('/', async (c) => {
+app.get('/products', async (c) => {
 	const sql = neon(c.env.DATABASE_URL)
 	const db = drizzle(sql)
 
